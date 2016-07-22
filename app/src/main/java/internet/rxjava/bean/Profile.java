@@ -1,4 +1,4 @@
-package fantasy.rxjava.bean;
+package internet.rxjava.bean;
 
 import com.google.gson.annotations.SerializedName;
 

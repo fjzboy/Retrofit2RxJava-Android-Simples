@@ -1,4 +1,4 @@
-package fantasy.rxjava;
+package internet.rxjava;
 
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import fantasy.rxjava.bean.Profile;
-import fantasy.rxjava.bean.Token;
-import fantasy.rxjava.util.RxUtils;
-import fantasy.rxjava.net.ServiceApi;
-import fantasy.rxjava.net.ServiceFactory;
+import internet.rxjava.bean.Profile;
+import internet.rxjava.bean.Token;
+import internet.rxjava.util.RxUtils;
+import internet.rxjava.net.ServiceApi;
+import internet.rxjava.net.ServiceFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

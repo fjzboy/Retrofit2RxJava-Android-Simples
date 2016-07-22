@@ -1,4 +1,4 @@
-package google.rxjava;
+package internet.rxjava;
 
 import org.junit.Test;
 

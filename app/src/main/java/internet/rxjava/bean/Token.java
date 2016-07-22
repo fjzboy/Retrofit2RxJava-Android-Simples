@@ -1,4 +1,4 @@
-package fantasy.rxjava.bean;
+package internet.rxjava.bean;
 
 /**
  * Created by WH1604025 on 2016/6/7.

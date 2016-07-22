@@ -1,9 +1,4 @@
-package fantasy.rxjava;
-
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
+package internet.rxjava;
 
 /**
  * Created by Michael Smith on 2016/7/21.

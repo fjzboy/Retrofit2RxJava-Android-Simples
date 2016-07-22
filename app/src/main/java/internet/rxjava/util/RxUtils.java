@@ -1,4 +1,4 @@
-package fantasy.rxjava.util;
+package internet.rxjava.util;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;

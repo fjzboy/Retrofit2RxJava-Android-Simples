@@ -1,4 +1,4 @@
-package fantasy.rxjava.util;
+package internet.rxjava.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

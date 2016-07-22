@@ -1,4 +1,4 @@
-package fantasy.rxjava;
+package internet.rxjava;
 
 import android.app.Application;
 

@@ -1,7 +1,7 @@
-package fantasy.rxjava.net;
+package internet.rxjava.net;
 
-import fantasy.rxjava.bean.Profile;
-import fantasy.rxjava.bean.Token;
+import internet.rxjava.bean.Profile;
+import internet.rxjava.bean.Token;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;

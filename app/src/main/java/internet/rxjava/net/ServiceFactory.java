@@ -1,15 +1,11 @@
-package fantasy.rxjava.net;
-
-import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
+package internet.rxjava.net;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import fantasy.rxjava.RxApplication;
-import fantasy.rxjava.util.NetUtils;
+import internet.rxjava.RxApplication;
+import internet.rxjava.util.NetUtils;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
