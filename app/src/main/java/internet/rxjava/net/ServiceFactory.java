@@ -26,10 +26,6 @@ public class ServiceFactory {
 
     public final static String TAG = "ServiceFactory";
 
-    private final static HttpLoggingInterceptor mHttpLoggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
-
-
-
     private ServiceFactory(){}
 
     /**
@@ -59,68 +55,70 @@ public class ServiceFactory {
         //设置缓存 10M
         Cache cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);   //缓存可用大小为10M
 
+        final HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        /**
+         * 无网直接读缓存
+         * mobile network 情况下缓存一分钟,过期重新请求
+         * wifi network 情况下不使用缓存
+         * none network 情况下离线缓存4周
+         */
+        final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                //获取网络状态
+                int netWorkState = NetUtils.getNetworkState(RxApplication.getInstance());
+                //无网络请求强制使用缓存
+                if (netWorkState == NetUtils.NETWORN_NONE) {
+                    request = request.newBuilder()
+                            .cacheControl(CacheControl.FORCE_CACHE)
+                            .build();
+                }
+
+                Response originalResponse = chain.proceed(request);
+
+                switch (netWorkState) {
+                    case NetUtils.NETWORN_MOBILE://mobile network 情况下缓存一分钟
+                        int maxAge = 60;
+                        return originalResponse.newBuilder()
+                                .removeHeader("Pragma")
+                                .removeHeader("Cache-Control")
+                                .header("Cache-Control", "public, max-age=" + maxAge)
+                                .build();
+
+                    case NetUtils.NETWORN_WIFI://wifi network 情况下不使用缓存
+                        maxAge = 0;
+                        return originalResponse.newBuilder()
+                                .removeHeader("Pragma")
+                                .removeHeader("Cache-Control")
+                                .header("Cache-Control", "public, max-age=" + maxAge)
+                                .build();
+
+                    case NetUtils.NETWORN_NONE://none network 情况下离线缓存4周
+                        int maxStale = 60 * 60 * 24 * 4 * 7;
+                        return originalResponse.newBuilder()
+                                .removeHeader("Pragma")
+                                .removeHeader("Cache-Control")
+                                .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                                .build();
+                    default:
+                        throw new IllegalStateException("network state  is Erro!");
+                }
+            }
+        };
+
         return new OkHttpClient.Builder()
                 .writeTimeout(30 * 1000, TimeUnit.MILLISECONDS)
                 .readTimeout(20 * 1000, TimeUnit.MILLISECONDS)
                 .connectTimeout(15 * 1000, TimeUnit.MILLISECONDS)
                  //设置拦截器，显示日志信息
-                .addInterceptor(mHttpLoggingInterceptor)
+                .addInterceptor(httpLoggingInterceptor)
                 .addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
                 .addInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)
                 .cache(cache)
                 .build();
     }
-
-    /**
-     * 无网直接读缓存
-     * mobile network 情况下缓存一分钟,过期重新请求
-     * wifi network 情况下不使用缓存
-     * none network 情况下离线缓存4周
-     */
-    private final static Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
-        @Override
-        public Response intercept(Chain chain) throws IOException {
-            Request request = chain.request();
-            //获取网络状态
-            int netWorkState = NetUtils.getNetworkState(RxApplication.getInstance());
-            //无网络请求强制使用缓存
-            if (netWorkState == NetUtils.NETWORN_NONE) {
-                request = request.newBuilder()
-                        .cacheControl(CacheControl.FORCE_CACHE)
-                        .build();
-            }
-
-            Response originalResponse = chain.proceed(request);
-
-            switch (netWorkState) {
-                case NetUtils.NETWORN_MOBILE://mobile network 情况下缓存一分钟
-                    int maxAge = 60;
-                    return originalResponse.newBuilder()
-                            .removeHeader("Pragma")
-                            .removeHeader("Cache-Control")
-                            .header("Cache-Control", "public, max-age=" + maxAge)
-                            .build();
-
-                case NetUtils.NETWORN_WIFI://wifi network 情况下不使用缓存
-                    maxAge = 0;
-                    return originalResponse.newBuilder()
-                            .removeHeader("Pragma")
-                            .removeHeader("Cache-Control")
-                            .header("Cache-Control", "public, max-age=" + maxAge)
-                            .build();
-
-                case NetUtils.NETWORN_NONE://none network 情况下离线缓存4周
-                    int maxStale = 60 * 60 * 24 * 4 * 7;
-                    return originalResponse.newBuilder()
-                            .removeHeader("Pragma")
-                            .removeHeader("Cache-Control")
-                            .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
-                            .build();
-                default:
-                    throw new IllegalStateException("network state  is Erro!");
-            }
-        }
-    };
 
 /*
     *//**
