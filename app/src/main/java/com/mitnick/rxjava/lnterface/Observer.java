@@ -1,4 +1,4 @@
-package internet.rxjava.lnterface;
+package com.mitnick.rxjava.lnterface;
 
 /**
  * Created by Michael Smith on 2016/7/24.

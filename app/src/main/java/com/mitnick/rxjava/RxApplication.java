@@ -1,4 +1,4 @@
-package internet.rxjava;
+package com.mitnick.rxjava;
 
 import android.app.Application;
 

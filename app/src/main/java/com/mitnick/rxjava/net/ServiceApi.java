@@ -1,7 +1,7 @@
-package internet.rxjava.net;
+package com.mitnick.rxjava.net;
 
-import internet.rxjava.bean.Profile;
-import internet.rxjava.bean.Token;
+import com.mitnick.rxjava.bean.Profile;
+import com.mitnick.rxjava.bean.Token;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -22,8 +22,8 @@ public interface ServiceApi {
     Call<Token> logins(@Header("Authorization") String auth);
 
     @GET("users/profile/")
-    Observable<Profile> getProfile(@Header("X-ZUMO-AUTH") String auth);
+    Observable<Profile> getProfile(@Header("X-ZUMO-AUTH") String accessToken);
 
     @GET("users/profile/")
-    Call<Profile> getProfiles(@Header("X-ZUMO-AUTH") String auth);
+    Call<Profile> getProfiles(@Header("X-ZUMO-AUTH") String accessToken);
 }

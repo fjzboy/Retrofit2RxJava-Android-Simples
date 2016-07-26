@@ -1,4 +1,4 @@
-package internet.rxjava;
+package com.mitnick;
 
 import org.junit.Test;
 

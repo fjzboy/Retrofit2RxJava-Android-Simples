@@ -1,16 +1,17 @@
-package internet.rxjava.net;
+package com.mitnick.rxjava.net;
 
 import android.content.Context;
 
 import org.greenrobot.eventbus.EventBus;
 
-import internet.rxjava.bean.Profile;
-import internet.rxjava.bean.Token;
-import internet.rxjava.lnterface.Observer;
-import internet.rxjava.util.RxUtils;
+import com.mitnick.rxjava.bean.Profile;
+import com.mitnick.rxjava.bean.Token;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Header;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -77,6 +78,7 @@ public class HttpImpl {
         }
     }
 
+
     public void login(String auth) {
         mSubscriptions.add(getApiClient().login(auth)
 //                              .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
@@ -91,7 +93,7 @@ public class HttpImpl {
                             @Override
                             public void onError(Throwable t) {
                                 Timber.i(TAG, "onError：" + t.toString());
-                                postEvent(new FailedEvent(MessageType.LOGIN, t));
+                                postEvent(new FailedEvent(FailedEvent.MessageType.LOGIN, t));
                             }
 
                             @Override
@@ -110,14 +112,14 @@ public class HttpImpl {
                 if (response.isSuccessful()) {
                     postEvent(response.body());
                 } else {
-                    postEvent(new FailedEvent(MessageType.PROFILE));
+                    postEvent(new FailedEvent(FailedEvent.MessageType.PROFILE));
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable t) {
                 Timber.e("onFailure：" + t.toString());
-                postEvent(new FailedEvent(MessageType.PROFILE, t));
+                postEvent(new FailedEvent(FailedEvent.MessageType.PROFILE, t));
             }
         });
     }
@@ -136,7 +138,7 @@ public class HttpImpl {
                             @Override
                             public void onError(Throwable t) {
                                 Timber.e("onError：" + t.toString());
-                                postEvent(new FailedEvent(MessageType.PROFILE));
+                                postEvent(new FailedEvent(FailedEvent.MessageType.PROFILE));
                             }
 
                             @Override
@@ -146,6 +148,5 @@ public class HttpImpl {
                         })
         );
     }
-
 
 }

@@ -1,4 +1,4 @@
-package internet.rxjava.bean;
+package com.mitnick.rxjava.bean;
 
 /**
  * Created by WH1604025 on 2016/6/7.

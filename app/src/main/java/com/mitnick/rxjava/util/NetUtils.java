@@ -1,4 +1,4 @@
-package internet.rxjava.util;
+package com.mitnick.rxjava.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

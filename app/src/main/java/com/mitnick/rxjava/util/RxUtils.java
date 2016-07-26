@@ -1,4 +1,4 @@
-package internet.rxjava.util;
+package com.mitnick.rxjava.util;
 
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;

@@ -1,4 +1,4 @@
-package internet.rxjava;
+package com.mitnick.rxjava;
 
 /**
  * Created by Michael Smith on 2016/7/21.

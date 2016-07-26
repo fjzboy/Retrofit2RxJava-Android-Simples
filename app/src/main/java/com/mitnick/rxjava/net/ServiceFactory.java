@@ -1,11 +1,11 @@
-package internet.rxjava.net;
+package com.mitnick.rxjava.net;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import internet.rxjava.RxApplication;
-import internet.rxjava.util.NetUtils;
+import com.mitnick.rxjava.RxApplication;
+import com.mitnick.rxjava.util.NetUtils;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;

@@ -1,29 +1,17 @@
-package internet.rxjava.activity;
+package com.mitnick.rxjava.activity;
 
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import internet.rxjava.R;
-import internet.rxjava.bean.Profile;
-import internet.rxjava.bean.Token;
-import internet.rxjava.net.FailedEvent;
-import internet.rxjava.net.HttpImpl;
-import internet.rxjava.net.MessageType;
-import internet.rxjava.util.RxUtils;
-import internet.rxjava.net.ServiceApi;
-import internet.rxjava.net.ServiceFactory;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
-import timber.log.Timber;
+import com.mitnick.rxjava.R;
+import com.mitnick.rxjava.bean.Profile;
+import com.mitnick.rxjava.bean.Token;
+import com.mitnick.rxjava.net.FailedEvent;
+import com.mitnick.rxjava.net.HttpImpl;
 
 public class MainActivity extends BaseActivity {
 
@@ -98,14 +86,15 @@ public class MainActivity extends BaseActivity {
         if(event instanceof Profile){
             Profile profile = (Profile) event;
             mTextView.setText("获取用户信息成功：" + profile.getUsername());
+            startActivity(new Intent().setClass(this,MainActivity.class));
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();
             switch (type){
-                case MessageType.LOGIN:
+                case FailedEvent.MessageType.LOGIN:
                     mTextView.setText("获取Token onError：");
                     break;
-                case MessageType.PROFILE:
+                case FailedEvent.MessageType.PROFILE:
                     mTextView.setText("获取Profile onError：");
                     break;
             }
