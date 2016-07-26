@@ -12,8 +12,6 @@ public class RxApplication extends Application {
 
     private static RxApplication sInstance;
 
-    private CompositeSubscription mSubscriptions;
-
     public  synchronized static  RxApplication getInstance(){
         return sInstance;
     }

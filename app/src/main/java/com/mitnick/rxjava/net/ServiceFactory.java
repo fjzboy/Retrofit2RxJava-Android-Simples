@@ -26,6 +26,8 @@ public class ServiceFactory {
 
     public final static String TAG = "ServiceFactory";
 
+    int count = 0;
+
     private ServiceFactory(){}
 
     /**

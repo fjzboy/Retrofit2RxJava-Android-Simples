@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 mTextView.setText("mRxjavaButton");
                 mProgressDialog.show();
-                HttpImpl.getInstance(MainActivity.this).getProfiles(mAccessToken);
+                HttpImpl.getInstance().getProfiles(mAccessToken);
             }
         });
 
@@ -49,7 +49,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 mTextView.setText("mRetrofitButton");
                 mProgressDialog.show();
-                HttpImpl.getInstance(MainActivity.this).getProfile(mAccessToken);
+                HttpImpl.getInstance().getProfile(mAccessToken);
             }
         });
 
@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mProgressDialog.show();
-                HttpImpl.getInstance(MainActivity.this).login(mAuth);
+                HttpImpl.getInstance().login(mAuth);
 
             }
         });

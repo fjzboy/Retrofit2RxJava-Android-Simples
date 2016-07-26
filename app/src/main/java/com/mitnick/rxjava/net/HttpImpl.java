@@ -1,6 +1,7 @@
 package com.mitnick.rxjava.net;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,19 +27,24 @@ public class HttpImpl {
 
     static volatile HttpImpl sInstance;
 
-    private Context mContext;
-
     static volatile  ServiceApi mApiClient;
+
     private CompositeSubscription mSubscriptions;
 
-    public HttpImpl(Context context) {
-        this.mContext = context;
+    int count = 0;
 
+    static int num = 0;
+
+    int sum = 0;
+
+    public HttpImpl() {
     }
 
     public ServiceApi getApiClient(){
         if(mApiClient == null){
             synchronized (ServiceApi.class){
+                sum++;
+                Log.i(TAG,"ServiceApi.newInstance() excute :" + sum + "次");
                 mApiClient = ServiceFactory.createRetrofit2RxJavaService(ServiceApi.class);
             }
         }
@@ -46,10 +52,12 @@ public class HttpImpl {
     }
 
     //获取唯一单列
-    public static HttpImpl getInstance(Context context) {
+    public static HttpImpl getInstance() {
         if (sInstance == null) {
             synchronized (HttpImpl.class) {
-                sInstance = new HttpImpl(context);
+                num++;
+                Log.i(TAG,"HttpImpl.newInstance() excute :" + num + "次");
+                sInstance = new HttpImpl();
             }
         }
         return sInstance;
@@ -60,21 +68,23 @@ public class HttpImpl {
     }
 
     //注册一个订阅者
-    public synchronized void register() {
-//        mSubscriptions = RxUtils.getNewCompositeSubIfUnsubscribed(mSubscriptions);
-//        mApiClient = ServiceFactory.createRetrofit2RxJavaService(ServiceApi.class);
-
+    public void register() {
         if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
-            mSubscriptions = new CompositeSubscription();
+            synchronized (this){
+                count ++;
+                Log.i(TAG,"register excute :" + count + "次");
+                mSubscriptions = new CompositeSubscription();
+            }
         }
     }
 
     //删除一个订阅者
-    public synchronized void unregister() {
-//        RxUtils.unSubscribeIfNotNull(mSubscriptions);
-//        mApiClient = null;
+    public void unregister() {
         if (mSubscriptions != null) {
-            mSubscriptions.unsubscribe();
+            synchronized (this){
+                Log.i(TAG,"unregister excute :" + count + "次");
+                mSubscriptions.unsubscribe();
+            }
         }
     }
 

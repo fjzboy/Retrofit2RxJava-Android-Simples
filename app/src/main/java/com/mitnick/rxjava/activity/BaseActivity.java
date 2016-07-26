@@ -22,7 +22,7 @@ public class BaseActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.i(TAG,"onCreate()");
-        HttpImpl.getInstance(this).register();
+
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BaseActivity extends AppCompatActivity{
         super.onResume();
         Timber.i(TAG,"onResume()");
         EventBus.getDefault().register(this);
-
+        HttpImpl.getInstance().register();
     }
 
     @Subscribe
@@ -43,6 +43,7 @@ public class BaseActivity extends AppCompatActivity{
         super.onPause();
         Timber.i(TAG,"onPause()");
         EventBus.getDefault().unregister(this);
+        HttpImpl.getInstance().unregister();
 
     }
 
@@ -50,6 +51,5 @@ public class BaseActivity extends AppCompatActivity{
     protected void onDestroy() {
         super.onDestroy();
         Timber.i(TAG,"onDestroy()");
-        HttpImpl.getInstance(this).unregister();
     }
 }
