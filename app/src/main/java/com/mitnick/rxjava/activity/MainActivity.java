@@ -1,6 +1,7 @@
 package com.mitnick.rxjava.activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -34,6 +35,14 @@ public class MainActivity extends BaseActivity {
 
         mProgressDialog  = new ProgressDialog(this);
         mProgressDialog.setTitle("wait...");
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+//                HttpImpl.getInstance().
+            }
+        });
+        mProgressDialog.setCanceledOnTouchOutside(false);
 
         mRxjavaButton.setOnClickListener(new View.OnClickListener() {
             @Override
