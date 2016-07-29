@@ -1,5 +1,6 @@
 package com.mitnick.rxjava.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,15 +16,10 @@ import timber.log.Timber;
  * Created by Michael Smith on 2016/7/24.
  */
 
-public class BaseActivity extends AppCompatActivity{
+public  class BaseActivity extends AppCompatActivity{
     private final static String TAG = "BaseActivity";
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Timber.i(TAG,"onCreate()");
-
-    }
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onResume() {
@@ -34,9 +30,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     @Subscribe
-    protected void onEventMainThread(Object event){
-
-    }
+    protected  void onEventMainThread(Object event){};
 
     @Override
     protected void onPause() {
@@ -44,12 +38,20 @@ public class BaseActivity extends AppCompatActivity{
         Timber.i(TAG,"onPause()");
         EventBus.getDefault().unregister(this);
         HttpImpl.getInstance().unregister();
-
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Timber.i(TAG,"onDestroy()");
+    public synchronized void showProgressDialog(String message) {
+        if(mProgressDialog == null){
+                mProgressDialog = new ProgressDialog(this);
+        }
+        mProgressDialog.setMessage(message);
+//        mProgressDialog.setCancelable(false);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog(){
+        if(mProgressDialog!=null && mProgressDialog.isShowing())
+            mProgressDialog.dismiss();
     }
 }

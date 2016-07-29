@@ -43,7 +43,6 @@ public class HttpImpl {
     public ServiceApi getApiClient(){
         if(mApiClient == null){
             synchronized (ServiceApi.class){
-                sum++;
                 Log.i(TAG,"ServiceApi.newInstance() excute :" + sum + "次");
                 mApiClient = ServiceFactory.createRetrofit2RxJavaService(ServiceApi.class);
             }
@@ -91,19 +90,19 @@ public class HttpImpl {
 
     public void login(String auth) {
         mSubscriptions.add(getApiClient().login(auth)
-//                              .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
+//                      .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new rx.Observer<Token>() {
                             @Override
                             public void onCompleted() {
-                                Timber.i(TAG, "onCompleted");
+                                Log.i(TAG, "onCompleted");
                             }
 
                             @Override
                             public void onError(Throwable t) {
-                                Timber.i(TAG, "onError：" + t.toString());
-                                postEvent(new FailedEvent(FailedEvent.MessageType.LOGIN, t));
+                                Log.i(TAG, "onError：" + t.toString());
+                                postEvent(new FailedEvent(MessageType.LOGIN, t));
                             }
 
                             @Override
@@ -122,14 +121,14 @@ public class HttpImpl {
                 if (response.isSuccessful()) {
                     postEvent(response.body());
                 } else {
-                    postEvent(new FailedEvent(FailedEvent.MessageType.PROFILE));
+                    postEvent(new FailedEvent(MessageType.PROFILE));
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable t) {
                 Timber.e("onFailure：" + t.toString());
-                postEvent(new FailedEvent(FailedEvent.MessageType.PROFILE, t));
+                postEvent(new FailedEvent(MessageType.PROFILE, t));
             }
         });
     }
@@ -138,7 +137,7 @@ public class HttpImpl {
         mSubscriptions.add(getApiClient().getProfile(accessToken)
 //                              .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
+//                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new rx.Observer<Profile>() {
                             @Override
                             public void onCompleted() {
@@ -148,7 +147,7 @@ public class HttpImpl {
                             @Override
                             public void onError(Throwable t) {
                                 Timber.e("onError：" + t.toString());
-                                postEvent(new FailedEvent(FailedEvent.MessageType.PROFILE));
+                                postEvent(new FailedEvent(MessageType.PROFILE));
                             }
 
                             @Override

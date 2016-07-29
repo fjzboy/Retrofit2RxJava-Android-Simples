@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mitnick.rxjava.R;
 import com.mitnick.rxjava.bean.Profile;
 import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
+import com.mitnick.rxjava.net.MessageType;
 
 public class MainActivity extends BaseActivity {
 
@@ -22,33 +24,25 @@ public class MainActivity extends BaseActivity {
     private TextView mTextView;
     private Button mRetrofitButton,mRxjavaButton;
 
-    private ProgressDialog mProgressDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         mTextView = (TextView) findViewById(R.id.textView);
         mRetrofitButton = (Button) findViewById(R.id.retrofitButton);
         mRxjavaButton = (Button) findViewById(R.id.rxjavaButton);
 
-        mProgressDialog  = new ProgressDialog(this);
-        mProgressDialog.setTitle("wait...");
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-//                HttpImpl.getInstance().
-            }
-        });
-        mProgressDialog.setCanceledOnTouchOutside(false);
+        initData();
+
 
         mRxjavaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mTextView.setText("mRxjavaButton");
-                mProgressDialog.show();
+                showProgressDialog("wait...");
                 HttpImpl.getInstance().getProfiles(mAccessToken);
             }
         });
@@ -57,36 +51,25 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 mTextView.setText("mRetrofitButton");
-                mProgressDialog.show();
+                showProgressDialog("wait...");
                 HttpImpl.getInstance().getProfile(mAccessToken);
             }
         });
-
-        mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mProgressDialog.show();
-                HttpImpl.getInstance().login(mAuth);
-
-            }
-        });
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
+    public void initData(){
+        if(getIntent().getExtras()!=null){
+            mAccessToken = getIntent().getExtras().getString("accessToken","");
+            mTextView.setText("获取Token成功！" + mAccessToken);
+        }else{
+            mTextView.setText("获取token失败，请重新登录！");
+        }
     }
 
     @Override
     protected void onEventMainThread(Object event) {
         super.onEventMainThread(event);
-        mProgressDialog.dismiss();
+        hideProgressDialog();
         if(event instanceof Token){
             Token token = (Token) event;
             mTextView.setText("获取Token成功！" + token.getAccess_token() );
@@ -95,23 +78,19 @@ public class MainActivity extends BaseActivity {
         if(event instanceof Profile){
             Profile profile = (Profile) event;
             mTextView.setText("获取用户信息成功：" + profile.getUsername());
-            startActivity(new Intent().setClass(this,MainActivity.class));
+            Toast.makeText(this, "Profile name is " + profile.getUsername(), Toast.LENGTH_SHORT).show();
+//            startActivity(new Intent().setClass(this,MainActivity.class));
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();
             switch (type){
-                case FailedEvent.MessageType.LOGIN:
+                case MessageType.LOGIN:
                     mTextView.setText("获取Token onError：");
                     break;
-                case FailedEvent.MessageType.PROFILE:
+                case MessageType.PROFILE:
                     mTextView.setText("获取Profile onError：");
                     break;
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 }

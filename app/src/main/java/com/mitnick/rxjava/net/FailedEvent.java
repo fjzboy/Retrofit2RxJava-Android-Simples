@@ -60,9 +60,4 @@ public class FailedEvent {
 	public void setObject(Object object) {
 		this.object = object;
 	}
-
-	public final class MessageType{
-		public final static int LOGIN = 0;
-		public final static int PROFILE = 1;
-	}
 }

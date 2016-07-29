@@ -86,7 +86,7 @@ public class ServiceFactory {
             Request request = chain.request();
             //获取网络状态
             int netWorkState = NetUtils.getNetworkState(RxApplication.getInstance());
-            //无网络请求强制使用缓存
+            //无网络，请求强制使用缓存
             if (netWorkState == NetUtils.NETWORN_NONE) {
                 request = request.newBuilder()
                         .cacheControl(CacheControl.FORCE_CACHE)
