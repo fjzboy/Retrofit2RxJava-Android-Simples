@@ -68,7 +68,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onEventMainThread(Object event) {
-        super.onEventMainThread(event);
         hideProgressDialog();
         if(event instanceof Token){
             Token token = (Token) event;

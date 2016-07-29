@@ -33,7 +33,6 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onEventMainThread(Object event) {
-        super.onEventMainThread(event);
         if(event instanceof Token){
             hideProgressDialog();
             Token token = (Token) event;

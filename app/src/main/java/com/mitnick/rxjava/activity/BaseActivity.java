@@ -16,7 +16,7 @@ import timber.log.Timber;
  * Created by Michael Smith on 2016/7/24.
  */
 
-public  class BaseActivity extends AppCompatActivity{
+public class BaseActivity extends AppCompatActivity{
     private final static String TAG = "BaseActivity";
 
     private ProgressDialog mProgressDialog;
