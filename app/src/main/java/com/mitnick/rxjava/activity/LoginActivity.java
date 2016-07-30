@@ -7,10 +7,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.mitnick.rxjava.R;
+import com.mitnick.rxjava.RxApplication;
 import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
 import com.mitnick.rxjava.net.MessageType;
+import com.mitnick.rxjava.util.PreferenceUtils;
 
 /**
  * Created by mitnick.cheng on 2016/7/28.
@@ -38,6 +40,7 @@ public class LoginActivity extends BaseActivity {
             hideProgressDialog();
             Token token = (Token) event;
             mAccessToken = token.getAccess_token();
+            PreferenceUtils.setPrefString(RxApplication.getInstance(),"refreshToken",token.getRefresh_token());
             Toast.makeText(LoginActivity.this,"登录成功！",Toast.LENGTH_LONG).show();
             Intent intent = new Intent().setClass(LoginActivity.this,MainActivity.class);
             intent.putExtra("accessToken",mAccessToken);
@@ -46,7 +49,7 @@ public class LoginActivity extends BaseActivity {
         if(event instanceof FailedEvent){
             hideProgressDialog();
             int type = ((FailedEvent) event).getType();
-            String message = ((FailedEvent) event).getObject()!=null? ((Throwable) ((FailedEvent) event).getObject()).getMessage():"请检查网络...";
+            String message = ((FailedEvent) event).getObject()!=null && ((Throwable) ((FailedEvent) event).getObject()).getMessage().indexOf("504")!=-1 ? "请检查网络设置...":"";
             switch (type){
                 case MessageType.LOGIN:
                     Toast.makeText(LoginActivity.this,message,Toast.LENGTH_LONG).show();

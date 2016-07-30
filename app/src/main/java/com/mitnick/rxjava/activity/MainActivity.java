@@ -10,11 +10,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mitnick.rxjava.R;
+import com.mitnick.rxjava.RxApplication;
 import com.mitnick.rxjava.bean.Profile;
 import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
 import com.mitnick.rxjava.net.MessageType;
+import com.mitnick.rxjava.util.PreferenceUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -41,7 +43,6 @@ public class MainActivity extends BaseActivity {
         mRxjavaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextView.setText("mRxjavaButton");
                 showProgressDialog("wait...");
                 HttpImpl.getInstance().getProfile(mAccessToken);
             }
@@ -50,9 +51,17 @@ public class MainActivity extends BaseActivity {
         mRetrofitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextView.setText("mRetrofitButton");
                 showProgressDialog("wait...");
                 HttpImpl.getInstance().getProfiles(mAccessToken);
+            }
+        });
+
+        mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgressDialog("wait...");
+                String refreshToken = PreferenceUtils.getPrefString(RxApplication.getInstance(),"refreshToken","");
+                HttpImpl.getInstance().refresh(refreshToken);
             }
         });
     }
@@ -62,7 +71,7 @@ public class MainActivity extends BaseActivity {
             mAccessToken = getIntent().getExtras().getString("accessToken","");
             mTextView.setText("获取Token成功！" + mAccessToken);
         }else{
-            mTextView.setText("获取token失败，请重新登录！");
+//            mTextView.setText("获取token失败，请重新登录！");
         }
     }
 
@@ -82,13 +91,21 @@ public class MainActivity extends BaseActivity {
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();
+            String message = ((FailedEvent) event).getObject()!=null?((Throwable) ((FailedEvent) event).getObject()).getMessage():"";
             switch (type){
                 case MessageType.LOGIN:
-                    mTextView.setText("获取Token onError：");
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                     break;
                 case MessageType.PROFILE:
-                    mTextView.setText("获取Profile onError：");
+//                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                     mTextView.setText(message);
                     break;
+                case MessageType.REFRESH:
+//                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    mTextView.setText(message);
+                    break;
+                default:
+                    Toast.makeText(MainActivity.this,"应用程序异常！",Toast.LENGTH_LONG).show();
             }
         }
     }

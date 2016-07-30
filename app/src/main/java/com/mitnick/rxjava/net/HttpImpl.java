@@ -2,10 +2,12 @@ package com.mitnick.rxjava.net;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
 import com.mitnick.rxjava.bean.Profile;
+import com.mitnick.rxjava.bean.RefreshRequest;
 import com.mitnick.rxjava.bean.Token;
 
 import retrofit2.Call;
@@ -28,6 +30,8 @@ public class HttpImpl {
     static volatile HttpImpl sInstance;
 
     static volatile  ServiceApi mApiClient;
+
+    private Context mContext;
 
     private CompositeSubscription mSubscriptions;
 
@@ -67,7 +71,8 @@ public class HttpImpl {
     }
 
     //注册一个订阅者
-    public void register() {
+    public void register(Context context) {
+        this.mContext = context;
         if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
             synchronized (this){
                 count ++;
@@ -78,7 +83,7 @@ public class HttpImpl {
     }
 
     //删除一个订阅者
-    public void unregister() {
+    public void unregister(Context context) {
         if (mSubscriptions != null) {
             synchronized (this){
                 Log.i(TAG,"CompositeSubscription unregister excute :" + count + "次");
@@ -101,6 +106,8 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
+                                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage();
+                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                                 postEvent(new FailedEvent(MessageType.LOGIN, throwable));
                             }
 
@@ -121,13 +128,16 @@ public class HttpImpl {
                     postEvent(response.body());
                 } else {
                     postEvent(new FailedEvent(MessageType.PROFILE));
+                    String message = response.code() == 504 ? "请检查网络设置...":(response.code() == 401 )?"令牌已过期，请重新登录...":response.code()+"";
+                    Toast.makeText(mContext, "请求失败！"+ message, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable throwable) {
-                Timber.e("onFailure：" + throwable.toString());
                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
+                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage().indexOf("401")!=-1?"令牌已过期，请重新登录...":throwable.getMessage();
+                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -144,9 +154,12 @@ public class HttpImpl {
                             }
 
                             @Override
-                            public void onError(Throwable t) {
-                                Timber.e("onError：" + t.toString());
-                                postEvent(new FailedEvent(MessageType.PROFILE));
+                            public void onError(Throwable throwable) {
+                                Timber.e("onError：" + throwable.toString());
+                                postEvent(new FailedEvent(MessageType.PROFILE,throwable));
+
+                                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage().indexOf("401")!=-1?"令牌已过期，请重新登录...":throwable.getMessage();
+                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -155,6 +168,29 @@ public class HttpImpl {
                             }
                         })
         );
+    }
+
+    public void refresh(String refreshToken){
+        Call<Token> call = getApiClient().refresh(new RefreshRequest(refreshToken));
+        call.enqueue(new Callback<Token>() {
+            @Override
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                if (response.isSuccessful()) {
+                    postEvent(response.body());
+                } else {
+                    postEvent(new FailedEvent(MessageType.REFRESH));
+                    String message = response.code() == 504 ? "请检查网络设置...":(response.code() == 401 )?"令牌已过期，请重新登录...":response.code()+"";
+                    Toast.makeText(mContext, "请求失败！"+ message, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Token> call, Throwable throwable) {
+                postEvent(new FailedEvent(MessageType.REFRESH, throwable));
+                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage().indexOf("401")!=-1?"令牌已过期，请重新登录...":throwable.getMessage();
+                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

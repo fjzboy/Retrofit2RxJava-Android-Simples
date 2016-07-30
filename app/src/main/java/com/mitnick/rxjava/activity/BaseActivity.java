@@ -26,7 +26,7 @@ public class BaseActivity extends AppCompatActivity{
         super.onResume();
         Timber.i(TAG,"onResume()");
         EventBus.getDefault().register(this);
-        HttpImpl.getInstance().register();
+        HttpImpl.getInstance().register(this);
     }
 
     @Subscribe
@@ -37,7 +37,7 @@ public class BaseActivity extends AppCompatActivity{
         super.onPause();
         Timber.i(TAG,"onPause()");
         EventBus.getDefault().unregister(this);
-        HttpImpl.getInstance().unregister();
+        HttpImpl.getInstance().unregister(this);
     }
 
     public synchronized void showProgressDialog(String message) {
