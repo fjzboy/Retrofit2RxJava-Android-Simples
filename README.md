@@ -48,7 +48,7 @@ Retrofit2 + Rxjava +Cache 机制，mobile network 情况下缓存一分钟过期
         }
     };
 
-# Token处理机制
+# Token过期处理机制
 
     public class TokenAuthenticator implements Authenticator {
       @Override
