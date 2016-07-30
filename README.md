@@ -62,7 +62,7 @@ Retrofit2 + Rxjava +Cache 机制，mobile network 情况下缓存一分钟过期
 
          //要用retrofit的同步方式
           Token token = call.execute().body();
-          PreferenceUtils.getPrefString(RxApplication.getInstance(),"refreshToken",token.getRefresh_token());
+          PreferenceUtils.setPrefString(RxApplication.getInstance(),"refreshToken",token.getRefresh_token());
 
           return response.request().newBuilder()
                   .header("X-ZUMO-AUTH", token.getAccess_token())
