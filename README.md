@@ -3,7 +3,7 @@ Retrofit2 + Rxjava +Cache 机制，mobile network 情况下缓存一分钟过期
 
 # 网络缓存机制
 
-          private final static Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
+      private final static Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
@@ -69,4 +69,3 @@ Retrofit2 + Rxjava +Cache 机制，mobile network 情况下缓存一分钟过期
                   .build();
        }
     }
-
