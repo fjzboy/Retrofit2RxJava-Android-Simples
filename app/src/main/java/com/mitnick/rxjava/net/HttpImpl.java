@@ -28,26 +28,19 @@ public class HttpImpl {
     private final static String TAG = "HttpImpl";
 
     static volatile HttpImpl sInstance;
-
-    static volatile  ServiceApi mApiClient;
+    static volatile ServiceApi mApiClient;
 
     private Context mContext;
-
     private CompositeSubscription mSubscriptions;
 
-    int count = 0;
-
-    static int num = 0;
-
-    int sum = 0;
 
     public HttpImpl() {
     }
 
-    public ServiceApi getApiClient(){
-        if(mApiClient == null){
-            synchronized (ServiceApi.class){
-                Log.i(TAG,"ServiceApi.newInstance() excute :" + sum + "次");
+    public ServiceApi getApiClient() {
+        if (mApiClient == null) {
+            synchronized (ServiceApi.class) {
+                Log.i(TAG, "ServiceApi.newInstance() excute ");
                 mApiClient = ServiceFactory.createRetrofit2RxJavaService(ServiceApi.class);
             }
         }
@@ -58,8 +51,7 @@ public class HttpImpl {
     public static HttpImpl getInstance() {
         if (sInstance == null) {
             synchronized (HttpImpl.class) {
-                num++;
-                Log.i(TAG,"HttpImpl.newInstance() excute :" + num + "次");
+                Log.i(TAG, "HttpImpl.newInstance() excute ");
                 sInstance = new HttpImpl();
             }
         }
@@ -74,9 +66,8 @@ public class HttpImpl {
     public void register(Context context) {
         this.mContext = context;
         if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
-            synchronized (this){
-                count ++;
-                Log.i(TAG,"CompositeSubscription register excute :" + count + "次");
+            synchronized (this) {
+                Log.i(TAG, "CompositeSubscription register excute");
                 mSubscriptions = new CompositeSubscription();
             }
         }
@@ -85,13 +76,12 @@ public class HttpImpl {
     //删除一个订阅者
     public void unregister(Context context) {
         if (mSubscriptions != null) {
-            synchronized (this){
-                Log.i(TAG,"CompositeSubscription unregister excute :" + count + "次");
+            synchronized (this) {
+                Log.i(TAG, "CompositeSubscription unregister excute");
                 mSubscriptions.unsubscribe();
             }
         }
     }
-
 
     public void login(String auth) {
         mSubscriptions.add(getApiClient().login(auth)
@@ -106,7 +96,7 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage();
+                                String message = throwable.getMessage().indexOf("504") != -1 ? "请检查网络设置..." : throwable.getMessage();
                                 Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                                 postEvent(new FailedEvent(MessageType.LOGIN, throwable));
                             }
@@ -128,15 +118,15 @@ public class HttpImpl {
                     postEvent(response.body());
                 } else {
                     postEvent(new FailedEvent(MessageType.PROFILE));
-                    String message = response.code() == 504 ? "请检查网络设置...":(response.code() == 401 )?"令牌已过期，请重新登录...":response.code()+"";
-                    Toast.makeText(mContext, "请求失败！"+ message, Toast.LENGTH_SHORT).show();
+                    String message = response.code() == 504 ? "请检查网络设置..." : (response.code() == 401) ? "令牌已过期，请重新登录..." : response.code() + "";
+                    Toast.makeText(mContext, "请求失败！" + message, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable throwable) {
                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
-                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage().indexOf("401")!=-1?"令牌已过期，请重新登录...":throwable.getMessage();
+                String message = throwable.getMessage().indexOf("504") != -1 ? "请检查网络设置..." : throwable.getMessage().indexOf("401") != -1 ? "令牌已过期，请重新登录..." : throwable.getMessage();
                 Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
             }
         });
@@ -144,7 +134,7 @@ public class HttpImpl {
 
     public void getProfile(String accessToken) {
         mSubscriptions.add(getApiClient().getProfile(accessToken)
-//                              .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
+        //               .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new rx.Observer<Profile>() {
@@ -156,10 +146,7 @@ public class HttpImpl {
                             @Override
                             public void onError(Throwable throwable) {
                                 Timber.e("onError：" + throwable.toString());
-                                postEvent(new FailedEvent(MessageType.PROFILE,throwable));
-
-                                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage().indexOf("401")!=-1?"令牌已过期，请重新登录...":throwable.getMessage();
-                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                                postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                             }
 
                             @Override
@@ -170,7 +157,7 @@ public class HttpImpl {
         );
     }
 
-    public void refresh(String refreshToken){
+    public void refresh(String refreshToken) {
         Call<Token> call = getApiClient().refresh(new RefreshRequest(refreshToken));
         call.enqueue(new Callback<Token>() {
             @Override
@@ -179,16 +166,12 @@ public class HttpImpl {
                     postEvent(response.body());
                 } else {
                     postEvent(new FailedEvent(MessageType.REFRESH));
-                    String message = response.code() == 504 ? "请检查网络设置...":(response.code() == 401 )?"令牌已过期，请重新登录...":response.code()+"";
-                    Toast.makeText(mContext, "请求失败！"+ message, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Token> call, Throwable throwable) {
                 postEvent(new FailedEvent(MessageType.REFRESH, throwable));
-                String message = throwable.getMessage().indexOf("504")!=-1 ? "请检查网络设置...":throwable.getMessage().indexOf("401")!=-1?"令牌已过期，请重新登录...":throwable.getMessage();
-                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
             }
         });
     }

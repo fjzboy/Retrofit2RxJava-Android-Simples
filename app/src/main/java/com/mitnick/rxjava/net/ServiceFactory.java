@@ -44,15 +44,6 @@ public class ServiceFactory {
         return retrofit.create(service);
     }
 
-    /**
-     * 有网根据过期时间重新请求
-     * 有网络缓存一分钟
-     * 无网读缓存，离线缓存4周
-     *
-     * @param service
-     * @param <T>
-     * @return
-     */
     public static <T> T createRetrofit2RxJavaService(final Class<T> service) {
         Retrofit retrofit = new Retrofit.Builder()
                 .client(getCacheOkHttpClient())
@@ -86,12 +77,6 @@ public class ServiceFactory {
 
     private final static HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
 
-    /**
-     * 无网直接读缓存
-     * mobile network 情况下缓存一分钟,过期重新请求
-     * wifi network 情况下不使用缓存
-     * none network 情况下离线缓存4周
-     */
     private final static Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
@@ -136,24 +121,4 @@ public class ServiceFactory {
             }
         }
     };
-
-/*
-    *//**
-     * 日志拦截器
-     *//*
-    private  final Interceptor LoggingInterceptor = new Interceptor() {
-        @Override
-        public Response intercept(Interceptor.Chain chain) throws IOException {
-            Request request = chain.request();
-            long t1 = System.nanoTime();
-            Log.i(TAG, String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers()));
-            Response response = chain.proceed(request);
-            long t2 = System.nanoTime();
-            Log.i(TAG, String.format("Received response for %s in %.1fms%n%s", response.request().url(), (t2 - t1) / 1e6d, response.headers()));
-
-            long  time = t2 - t1;
-            Log.i(TAG, "LoggingInterceptor duration：" + time+" ms");
-            return response;
-        }
-    };*/
 }
