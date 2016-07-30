@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("google.rxjava", appContext.getPackageName());
+        assertEquals("com.mitnick..rxjava", appContext.getPackageName());
     }
 }

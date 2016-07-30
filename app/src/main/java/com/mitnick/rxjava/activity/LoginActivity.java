@@ -25,6 +25,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
     }
 
+    //activity_login.xml 中onClick方法
     void login(View view){
         showProgressDialog("login...");
         HttpImpl.getInstance().login("Basic dG1qMDAxOjEyMzQ1Ng==");
@@ -45,12 +46,13 @@ public class LoginActivity extends BaseActivity {
         if(event instanceof FailedEvent){
             hideProgressDialog();
             int type = ((FailedEvent) event).getType();
+            String message = ((FailedEvent) event).getObject()!=null? ((Throwable) ((FailedEvent) event).getObject()).getMessage():"请检查网络...";
             switch (type){
                 case MessageType.LOGIN:
-                    Toast.makeText(LoginActivity.this,"登录失败,请检查网络是否通畅！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this,message,Toast.LENGTH_LONG).show();
                     break;
                 default:
-                    Toast.makeText(LoginActivity.this,"网络异常，请检查网络设置！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this,"应用程序异常！",Toast.LENGTH_LONG).show();
             }
         }
     }

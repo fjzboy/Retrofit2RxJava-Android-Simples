@@ -18,7 +18,7 @@ import com.mitnick.rxjava.net.MessageType;
 
 public class MainActivity extends BaseActivity {
 
-    private String mAuth = "Basic dG1qMDAxOjEyMzQ1Ng==";
+//    private String mAuth = "Basic dG1qMDAxOjEyMzQ1Ng==";
     private String mAccessToken = "";
 
     private TextView mTextView;
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 mTextView.setText("mRxjavaButton");
                 showProgressDialog("wait...");
-                HttpImpl.getInstance().getProfiles(mAccessToken);
+                HttpImpl.getInstance().getProfile(mAccessToken);
             }
         });
 
@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 mTextView.setText("mRetrofitButton");
                 showProgressDialog("wait...");
-                HttpImpl.getInstance().getProfile(mAccessToken);
+                HttpImpl.getInstance().getProfiles(mAccessToken);
             }
         });
     }
@@ -77,8 +77,8 @@ public class MainActivity extends BaseActivity {
         if(event instanceof Profile){
             Profile profile = (Profile) event;
             mTextView.setText("获取用户信息成功：" + profile.getUsername());
-            Toast.makeText(this, "Profile name is " + profile.getUsername(), Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent().setClass(this,MainActivity.class));
+//            Toast.makeText(this, "Profile name is " + profile.getUsername(), Toast.LENGTH_SHORT).show();
+            startActivity(new Intent().setClass(this,MainActivity.class));
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();

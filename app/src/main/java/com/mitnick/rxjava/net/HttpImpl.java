@@ -71,7 +71,7 @@ public class HttpImpl {
         if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
             synchronized (this){
                 count ++;
-                Log.i(TAG,"register excute :" + count + "次");
+                Log.i(TAG,"CompositeSubscription register excute :" + count + "次");
                 mSubscriptions = new CompositeSubscription();
             }
         }
@@ -81,7 +81,7 @@ public class HttpImpl {
     public void unregister() {
         if (mSubscriptions != null) {
             synchronized (this){
-                Log.i(TAG,"unregister excute :" + count + "次");
+                Log.i(TAG,"CompositeSubscription unregister excute :" + count + "次");
                 mSubscriptions.unsubscribe();
             }
         }
@@ -100,9 +100,8 @@ public class HttpImpl {
                             }
 
                             @Override
-                            public void onError(Throwable t) {
-                                Log.i(TAG, "onError：" + t.toString());
-                                postEvent(new FailedEvent(MessageType.LOGIN, t));
+                            public void onError(Throwable throwable) {
+                                postEvent(new FailedEvent(MessageType.LOGIN, throwable));
                             }
 
                             @Override
@@ -126,9 +125,9 @@ public class HttpImpl {
             }
 
             @Override
-            public void onFailure(Call<Profile> call, Throwable t) {
-                Timber.e("onFailure：" + t.toString());
-                postEvent(new FailedEvent(MessageType.PROFILE, t));
+            public void onFailure(Call<Profile> call, Throwable throwable) {
+                Timber.e("onFailure：" + throwable.toString());
+                postEvent(new FailedEvent(MessageType.PROFILE, throwable));
             }
         });
     }
@@ -137,7 +136,7 @@ public class HttpImpl {
         mSubscriptions.add(getApiClient().getProfile(accessToken)
 //                              .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
                         .subscribeOn(Schedulers.newThread())
-//                        .observeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new rx.Observer<Profile>() {
                             @Override
                             public void onCompleted() {
