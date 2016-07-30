@@ -32,6 +32,8 @@ public class TokenAuthenticator implements Authenticator {
         //要用retrofit的同步方式
         Token token = call.execute().body();
 
+        PreferenceUtils.setPrefString(RxApplication.getInstance(),"refreshToken",token.getRefresh_token());
+
         return response.request().newBuilder()
                 .header("X-ZUMO-AUTH", token.getAccess_token())
                 .build();
