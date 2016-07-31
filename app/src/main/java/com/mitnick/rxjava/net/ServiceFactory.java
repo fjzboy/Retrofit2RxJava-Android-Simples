@@ -30,7 +30,6 @@ import timber.log.Timber;
  */
 
 public class ServiceFactory {
-
     public final static String TAG = "ServiceFactory";
 
     private ServiceFactory() {
