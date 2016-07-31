@@ -16,6 +16,7 @@ import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
 import com.mitnick.rxjava.net.MessageType;
+import com.mitnick.rxjava.util.PreferenceConstants;
 import com.mitnick.rxjava.util.PreferenceUtils;
 
 public class MainActivity extends BaseActivity {
@@ -60,7 +61,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 showProgressDialog("wait...");
-                String refreshToken = PreferenceUtils.getPrefString(RxApplication.getInstance(),"refreshToken","");
+                String refreshToken = PreferenceUtils.getPrefString(RxApplication.getInstance(), PreferenceConstants.REFRESH_TOKEN,"");
                 HttpImpl.getInstance().refresh(refreshToken);
             }
         });
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onEventMainThread(Object event) {
+        super.onEventMainThread(event);
         hideProgressDialog();
         if(event instanceof Token){
             Token token = (Token) event;
@@ -87,7 +89,7 @@ public class MainActivity extends BaseActivity {
             Profile profile = (Profile) event;
             mTextView.setText("获取用户信息成功：" + profile.getUsername());
 //            Toast.makeText(this, "Profile name is " + profile.getUsername(), Toast.LENGTH_SHORT).show();
-            startActivity(new Intent().setClass(this,MainActivity.class));
+            startActivity(new Intent().setClass(MainActivity.this,MainActivity.class));
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();

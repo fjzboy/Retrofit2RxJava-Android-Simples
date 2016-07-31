@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,18 +41,20 @@ public class BaseActivity extends AppCompatActivity{
         HttpImpl.getInstance().unregister(this);
     }
 
-    public synchronized void showProgressDialog(String message) {
+    public void showProgressDialog(String message) {
         if(mProgressDialog == null){
                 mProgressDialog = new ProgressDialog(this);
+                Log.i(TAG,this.getClass().getName());
+                mProgressDialog.setMessage(message);
+    //          mProgressDialog.setCancelable(false);
+                mProgressDialog.setCanceledOnTouchOutside(false);
         }
-        mProgressDialog.setMessage(message);
-//        mProgressDialog.setCancelable(false);
-        mProgressDialog.setCanceledOnTouchOutside(false);
         mProgressDialog.show();
     }
 
     public void hideProgressDialog(){
         if(mProgressDialog!=null && mProgressDialog.isShowing())
             mProgressDialog.dismiss();
+
     }
 }

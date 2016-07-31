@@ -39,7 +39,7 @@ public class HttpImpl {
 
     public ServiceApi getApiClient() {
         if (mApiClient == null) {
-            synchronized (ServiceApi.class) {
+            synchronized (this) {
                 Log.i(TAG, "ServiceApi.newInstance() excute ");
                 mApiClient = ServiceFactory.createRetrofit2RxJavaService(ServiceApi.class);
             }
@@ -66,20 +66,17 @@ public class HttpImpl {
     public void register(Context context) {
         this.mContext = context;
         if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
-            synchronized (this) {
                 Log.i(TAG, "CompositeSubscription register excute");
                 mSubscriptions = new CompositeSubscription();
-            }
         }
     }
 
     //删除一个订阅者
     public void unregister(Context context) {
+        this.mContext = null;
         if (mSubscriptions != null) {
-            synchronized (this) {
-                Log.i(TAG, "CompositeSubscription unregister excute");
-                mSubscriptions.unsubscribe();
-            }
+            Log.i(TAG, "CompositeSubscription unregister excute");
+            mSubscriptions.unsubscribe();
         }
     }
 
