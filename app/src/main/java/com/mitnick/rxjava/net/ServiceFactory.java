@@ -36,7 +36,7 @@ public class ServiceFactory {
     private ServiceFactory() {
     }
 
-    public static <T> T createRetrofit2(final Class<T> service) {
+    public static <T> T createRetrofit2Service(final Class<T> service) {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(ServiceApi.baseurl)
