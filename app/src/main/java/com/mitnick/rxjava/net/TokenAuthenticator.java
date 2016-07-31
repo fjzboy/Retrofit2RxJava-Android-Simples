@@ -24,11 +24,10 @@ public class TokenAuthenticator implements Authenticator {
     public Request authenticate(Route route, Response response) throws IOException {
         //取出本地的refreshToken
         String refreshToken = PreferenceUtils.getPrefString(RxApplication.getInstance(),PreferenceConstants.REFRESH_TOKEN,"");
-        RefreshRequest refreshRequest = new RefreshRequest(refreshToken);
 
         // 通过一个特定的接口获取新的token，此处要用到同步的retrofit请求
         ServiceApi service = ServiceFactory.createRetrofit2(ServiceApi.class);
-        Call<Token> call = service.refresh(refreshRequest);
+        Call<Token> call = service.refresh(new RefreshRequest(refreshToken));
 
         //要用retrofit的同步方式
         Token token = call.execute().body();
