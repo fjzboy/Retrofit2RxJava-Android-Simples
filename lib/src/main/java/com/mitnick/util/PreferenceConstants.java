@@ -1,7 +1,6 @@
-package com.mitnick.rxjava.util;
+package com.mitnick.util;
 
 public class PreferenceConstants {
-	
 	public final static String ACCOUNT = "account";
 	public final static String PASSWORD = "password";
 	public final static String FIRSTINSTALL = "first_install";

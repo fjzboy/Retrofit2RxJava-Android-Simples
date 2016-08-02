@@ -3,7 +3,6 @@ package com.mitnick.rxjava.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.mitnick.rxjava.R;
@@ -12,8 +11,8 @@ import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
 import com.mitnick.rxjava.net.MessageType;
-import com.mitnick.rxjava.util.PreferenceConstants;
-import com.mitnick.rxjava.util.PreferenceUtils;
+import com.mitnick.util.PreferenceConstants;
+import com.mitnick.util.PreferenceUtils;
 
 /**
  * Created by mitnick.cheng on 2016/7/28.
@@ -58,7 +57,7 @@ public class LoginActivity extends BaseActivity {
         if(event instanceof FailedEvent){
             hideProgressDialog();
             int type = ((FailedEvent) event).getType();
-            String message = ((FailedEvent) event).getObject()!=null && ((Throwable) ((FailedEvent) event).getObject()).getMessage().indexOf("504")!=-1 ? "请检查网络设置...":"";
+            String message = ((FailedEvent) event).getObject()!=null && ((Throwable) ((FailedEvent) event).getObject()).getMessage().indexOf("504")!=-1 ? "请检查网络设置...":((Throwable) ((FailedEvent) event).getObject()).getMessage();
             switch (type){
                 case MessageType.LOGIN:
                     Toast.makeText(LoginActivity.this,message,Toast.LENGTH_LONG).show();

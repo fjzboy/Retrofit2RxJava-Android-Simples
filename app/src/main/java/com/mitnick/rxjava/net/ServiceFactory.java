@@ -4,14 +4,11 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Proxy;
 import java.util.concurrent.TimeUnit;
 
 import com.mitnick.rxjava.RxApplication;
-import com.mitnick.rxjava.util.NetUtils;
-import com.mitnick.rxjava.util.PreferenceUtils;
+import com.mitnick.util.NetUtils;
 
-import okhttp3.Authenticator;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
@@ -19,11 +16,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import timber.log.Timber;
 
 /**
  * Created by Michael Smith on 2016/7/21.
@@ -83,7 +78,7 @@ public class ServiceFactory {
             //获取网络状态
             int netWorkState = NetUtils.getNetworkState(RxApplication.getInstance());
             //无网络，请求强制使用缓存
-            if (netWorkState == NetUtils.NETWORN_NONE) {
+            if (netWorkState == NetUtils.NETWORK_NONE) {
                 request = request.newBuilder()
                         .cacheControl(CacheControl.FORCE_CACHE)
                         .build();
@@ -92,7 +87,7 @@ public class ServiceFactory {
             Response originalResponse = chain.proceed(request);
 
             switch (netWorkState) {
-                case NetUtils.NETWORN_MOBILE://mobile network 情况下缓存一分钟
+                case NetUtils.NETWORK_MOBILE://mobile network 情况下缓存一分钟
                     int maxAge = 60;
                     return originalResponse.newBuilder()
                             .removeHeader("Pragma")
@@ -100,7 +95,7 @@ public class ServiceFactory {
                             .header("Cache-Control", "public, max-age=" + maxAge)
                             .build();
 
-                case NetUtils.NETWORN_WIFI://wifi network 情况下不使用缓存
+                case NetUtils.NETWORK_WIFI://wifi network 情况下不使用缓存
                     maxAge = 0;
                     return originalResponse.newBuilder()
                             .removeHeader("Pragma")
@@ -108,7 +103,7 @@ public class ServiceFactory {
                             .header("Cache-Control", "public, max-age=" + maxAge)
                             .build();
 
-                case NetUtils.NETWORN_NONE://none network 情况下离线缓存4周
+                case NetUtils.NETWORK_NONE://none network 情况下离线缓存4周
                     int maxStale = 60 * 60 * 24 * 4 * 7;
                     return originalResponse.newBuilder()
                             .removeHeader("Pragma")

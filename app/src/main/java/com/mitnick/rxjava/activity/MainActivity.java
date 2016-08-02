@@ -1,7 +1,5 @@
 package com.mitnick.rxjava.activity;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,8 +14,8 @@ import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
 import com.mitnick.rxjava.net.MessageType;
-import com.mitnick.rxjava.util.PreferenceConstants;
-import com.mitnick.rxjava.util.PreferenceUtils;
+import com.mitnick.util.PreferenceConstants;
+import com.mitnick.util.PreferenceUtils;
 
 public class MainActivity extends BaseActivity {
 

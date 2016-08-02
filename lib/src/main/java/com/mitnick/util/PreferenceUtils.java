@@ -1,4 +1,4 @@
-package com.mitnick.rxjava.util;
+package com.mitnick.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,7 +28,8 @@ public class PreferenceUtils {
 	}
 
 	public static boolean hasKey(Context context, final String key) {
-		return PreferenceManager.getDefaultSharedPreferences(context).contains(key);
+		return PreferenceManager.getDefaultSharedPreferences(context).contains(
+				key);
 	}
 
 	public static void setPrefBoolean(Context context, final String key,
