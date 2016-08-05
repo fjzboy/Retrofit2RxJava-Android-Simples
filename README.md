@@ -69,3 +69,8 @@ Retrofit2 + Rxjava +Cache 机制+EventBus，新增Token失效处理方案，mobi
                   .build();
        }
     }
+# Unsupported major.minor version 52.0 问题解决方案
+http://stackoverflow.com/questions/36008207/how-to-run-android-code-in-eclipse
+
+To fix this, i have to go in my project.properties file，
+And in this file add this line : sdk.buildtools=23.0.2
