@@ -12,6 +12,8 @@ import com.mitnick.rxjava.net.MessageType;
 import com.mitnick.util.PreferenceConstants;
 import com.mitnick.util.PreferenceUtils;
 
+import timber.log.Timber;
+
 /**
  * Created by mitnick.cheng on 2016/7/28.
  */
@@ -50,26 +52,27 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onEventMainThread(Object event) {
         super.onEventMainThread(event);
+        hideProgressDialog();
         if(event instanceof Token){
-            hideProgressDialog();
             Token token = (Token) event;
             mAccessToken = token.getAccess_token();
             PreferenceUtils.setPrefString(RxApplication.getInstance(), PreferenceConstants.REFRESH_TOKEN,token.getRefresh_token());
-            Toast.makeText(LoginActivity.this,"登录成功！",Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this,"登录成功！",Toast.LENGTH_SHORT).show();
             Intent intent = new Intent().setClass(LoginActivity.this,MainActivity.class);
             intent.putExtra("accessToken",mAccessToken);
             startActivity(intent);
         }
         if(event instanceof FailedEvent){
-            hideProgressDialog();
             int type = ((FailedEvent) event).getType();
-            String message = ((FailedEvent) event).getObject()!=null && ((Throwable) ((FailedEvent) event).getObject()).getMessage().indexOf("504")!=-1 ? "请检查网络设置...":((Throwable) ((FailedEvent) event).getObject()).getMessage();
+            String message = ((FailedEvent) event).getObject()!=null ?
+                    (((Throwable) ((FailedEvent) event).getObject()).getMessage().indexOf("504")!=-1 ? "请检查网络设置...":((Throwable) ((FailedEvent) event).getObject()).getMessage() )
+                    : "";
             switch (type){
                 case MessageType.LOGIN:
-                    Toast.makeText(LoginActivity.this,message,Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,"登录失败！" + message,Toast.LENGTH_SHORT).show();
                     break;
                 default:
-                    Toast.makeText(LoginActivity.this,"应用程序异常！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(this,"应用程序异常！" + message,Toast.LENGTH_SHORT).show();
             }
         }
     }

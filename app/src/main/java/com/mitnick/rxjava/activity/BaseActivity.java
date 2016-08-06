@@ -6,12 +6,12 @@ import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
+import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
+import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
-
+import com.mitnick.rxjava.net.MessageType;
 import timber.log.Timber;
 
 /**
@@ -19,8 +19,7 @@ import timber.log.Timber;
  */
 
 public abstract class BaseActivity extends AppCompatActivity{
-    private final static String TAG = "BaseActivity";
-
+    protected final static String TAG = "BaseActivity";
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -40,18 +39,18 @@ public abstract class BaseActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        Timber.i(TAG,"onResume()");
         EventBus.getDefault().register(this);
         HttpImpl.getInstance().register(this);
     }
 
     @Subscribe
-    protected  void onEventMainThread(Object event){};
+    protected  void onEventMainThread(Object event){
+//        MessageType.handlerNetWorkException(this,event);
+    };
 
     @Override
     protected void onPause() {
         super.onPause();
-        Timber.i(TAG,"onPause()");
         EventBus.getDefault().unregister(this);
         HttpImpl.getInstance().unregister(this);
     }
@@ -59,9 +58,8 @@ public abstract class BaseActivity extends AppCompatActivity{
     public void showProgressDialog(String message) {
         if(mProgressDialog == null){
                 mProgressDialog = new ProgressDialog(this);
-                Log.i(TAG,this.getClass().getName());
                 mProgressDialog.setMessage(message);
-    //          mProgressDialog.setCancelable(false);
+                mProgressDialog.setCancelable(false);
                 mProgressDialog.setCanceledOnTouchOutside(false);
         }
         mProgressDialog.show();

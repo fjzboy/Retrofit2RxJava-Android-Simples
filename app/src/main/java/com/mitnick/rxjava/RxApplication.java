@@ -2,6 +2,8 @@ package com.mitnick.rxjava;
 
 import android.app.Application;
 
+import com.mitnick.util.L;
+
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -20,6 +22,7 @@ public class RxApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
+        L.isDebug = false;
     }
 
 

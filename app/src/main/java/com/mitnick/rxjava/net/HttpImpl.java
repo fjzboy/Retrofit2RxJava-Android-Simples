@@ -94,9 +94,8 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                String message = throwable.getMessage().indexOf("504") != -1 ? "请检查网络设置..." : throwable.getMessage();
-                                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
                                 postEvent(new FailedEvent(MessageType.LOGIN, throwable));
+                                L.e("login 请求失败！" + throwable.toString());
                             }
 
                             @Override
@@ -116,17 +115,14 @@ public class HttpImpl {
                     postEvent(response.body());
                 } else {
                     postEvent(new FailedEvent(MessageType.PROFILE));
-                    String message = response.code() == 504 ? "请检查网络设置..." : (response.code() == 401) ? "令牌已过期，请重新登录..." : response.code() + "";
-                    Toast.makeText(mContext, "请求失败！" + message, Toast.LENGTH_SHORT).show();
+                    L.e("getProfiles 请求失败！" +  response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable throwable) {
                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
-                L.e(TAG,throwable.getMessage());
-                String message = throwable.getMessage().indexOf("504") != -1 ? "请检查网络设置..." : throwable.getMessage().indexOf("401") != -1 ? "令牌已过期，请重新登录..." : throwable.getMessage();
-                Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                L.e("getProfiles 请求失败！" + throwable.toString());
             }
         });
     }
@@ -144,8 +140,8 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                L.e("onError：" + throwable.toString());
                                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
+                                L.e("getProfile 请求失败！" + throwable.toString());
                             }
 
                             @Override
@@ -165,12 +161,14 @@ public class HttpImpl {
                     postEvent(response.body());
                 } else {
                     postEvent(new FailedEvent(MessageType.REFRESH));
+                    L.e(TAG,"refresh 请求失败！" +  response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Token> call, Throwable throwable) {
                 postEvent(new FailedEvent(MessageType.REFRESH, throwable));
+                L.e(TAG,"refresh 请求失败！" + throwable.toString());
             }
         });
     }
