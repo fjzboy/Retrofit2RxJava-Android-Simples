@@ -128,7 +128,7 @@ public class NetUtils {
         NetworkInfo.State state = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
                 .getState();
         if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
-            return NETWORK_NONE;
+            return NETWORK_WIFI;
         }
 
         // Mobile
@@ -152,5 +152,4 @@ public class NetUtils {
     public static final int NETWORK_4G = 4;
     // moblie networks
     public static final int NETWORK_MOBILE = 5;
-
 }

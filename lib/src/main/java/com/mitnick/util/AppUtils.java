@@ -86,7 +86,7 @@ public class AppUtils {
         PackageInfo info = null;
         try {
             info = pm.getPackageInfo(context.getApplicationContext().getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
         if (info != null) {
