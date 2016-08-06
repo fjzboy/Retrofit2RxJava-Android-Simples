@@ -1,11 +1,8 @@
 package com.mitnick.rxjava.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Toast;
-
 import com.mitnick.rxjava.R;
 import com.mitnick.rxjava.RxApplication;
 import com.mitnick.rxjava.bean.Token;
@@ -20,12 +17,20 @@ import com.mitnick.util.PreferenceUtils;
  */
 
 public class LoginActivity extends BaseActivity {
-    String mAccessToken = "";
+    private String mAccessToken = "";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void initView() {
         setContentView(R.layout.activity_login);
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+    @Override
+    public void initEvent() {
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
