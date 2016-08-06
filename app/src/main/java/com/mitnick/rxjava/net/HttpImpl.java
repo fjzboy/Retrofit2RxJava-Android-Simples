@@ -9,6 +9,7 @@ import org.greenrobot.eventbus.EventBus;
 import com.mitnick.rxjava.bean.Profile;
 import com.mitnick.rxjava.bean.RefreshRequest;
 import com.mitnick.rxjava.bean.Token;
+import com.mitnick.util.L;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,7 +19,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
-import timber.log.Timber;
+
 
 /**
  * Created by Michael Smith on 2016/7/24.
@@ -66,7 +67,7 @@ public class HttpImpl {
     public void register(Context context) {
         this.mContext = context;
         if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
-                Log.i(TAG, "CompositeSubscription register excute");
+                L.i(TAG, "CompositeSubscription register excute");
                 mSubscriptions = new CompositeSubscription();
         }
     }
@@ -75,7 +76,7 @@ public class HttpImpl {
     public void unregister(Context context) {
         this.mContext = null;
         if (mSubscriptions != null) {
-            Log.i(TAG, "CompositeSubscription unregister excute");
+            L.i(TAG, "CompositeSubscription unregister excute");
             mSubscriptions.unsubscribe();
         }
     }
@@ -123,6 +124,7 @@ public class HttpImpl {
             @Override
             public void onFailure(Call<Profile> call, Throwable throwable) {
                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
+                L.e(TAG,throwable.getMessage());
                 String message = throwable.getMessage().indexOf("504") != -1 ? "请检查网络设置..." : throwable.getMessage().indexOf("401") != -1 ? "令牌已过期，请重新登录..." : throwable.getMessage();
                 Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
             }
@@ -137,12 +139,12 @@ public class HttpImpl {
                         .subscribe(new rx.Observer<Profile>() {
                             @Override
                             public void onCompleted() {
-                                Timber.i("onCompleted");
+                                L.i("onCompleted");
                             }
 
                             @Override
                             public void onError(Throwable throwable) {
-                                Timber.e("onError：" + throwable.toString());
+                                L.e("onError：" + throwable.toString());
                                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                             }
 
