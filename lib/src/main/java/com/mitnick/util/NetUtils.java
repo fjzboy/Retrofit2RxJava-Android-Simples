@@ -100,7 +100,7 @@ public class NetUtils {
     }
 
     /**
-     * 获取当前手机的网络类型(WIFI,2G,3G,4G)
+     * 获取当前手机的可用网络类型(WIFI,2G,3G,4G)
      * 需添加权限<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
      * 需要用到上面的方法
      */
