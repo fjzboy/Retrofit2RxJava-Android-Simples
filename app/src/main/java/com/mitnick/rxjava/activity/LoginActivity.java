@@ -2,9 +2,11 @@ package com.mitnick.rxjava.activity;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.mitnick.rxjava.R;
 import com.mitnick.rxjava.RxApplication;
+import com.mitnick.rxjava.bean.Profile;
 import com.mitnick.rxjava.bean.Token;
 import com.mitnick.rxjava.net.FailedEvent;
 import com.mitnick.rxjava.net.HttpImpl;
@@ -21,9 +23,12 @@ import timber.log.Timber;
 public class LoginActivity extends BaseActivity {
     private String mAccessToken = "";
 
+    private TextView mTextView;
+
     @Override
     public void initView() {
         setContentView(R.layout.activity_login);
+        mTextView = (TextView) findViewById(R.id.textView);
     }
 
     @Override
@@ -38,6 +43,14 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View v) {
                 showProgressDialog("login...");
                 HttpImpl.getInstance().login("Basic dG1qMDAxOjEyMzQ1Ng==");
+            }
+        });
+
+        findViewById(R.id.loginAndGetProfile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgressDialog("login...");
+                HttpImpl.getInstance().loginAndGetProfile("Basic dG1qMDAxOjEyMzQ1Ng==");
             }
         });
     }
@@ -61,6 +74,11 @@ public class LoginActivity extends BaseActivity {
             Intent intent = new Intent().setClass(LoginActivity.this,MainActivity.class);
             intent.putExtra("accessToken",mAccessToken);
             startActivity(intent);
+        }
+        if(event instanceof Profile){
+            Profile profile = (Profile) event;
+            mTextView.setText("获取成功： \t name :" + profile.getUsername() +" \t Email :"
+                    + profile.getEmail() + "\t  height: "+ profile.getHeight() + " \t weight :"+ profile.getWeight());
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();

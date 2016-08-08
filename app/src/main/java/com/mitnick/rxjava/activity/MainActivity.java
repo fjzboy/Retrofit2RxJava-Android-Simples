@@ -81,7 +81,6 @@ public class MainActivity extends BaseActivity {
         if(event instanceof Profile){
             Profile profile = (Profile) event;
             mTextView.setText("获取用户信息成功：" + profile.getUsername());
-//            Toast.makeText(this, "Profile name is " + profile.getUsername(), Toast.LENGTH_SHORT).show();
             startActivity(new Intent().setClass(MainActivity.this,MainActivity.class));
         }
 

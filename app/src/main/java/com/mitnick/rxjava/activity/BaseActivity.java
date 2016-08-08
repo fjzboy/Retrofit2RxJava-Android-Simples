@@ -40,19 +40,17 @@ public abstract class BaseActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        HttpImpl.getInstance().register(this);
     }
 
     @Subscribe
     protected  void onEventMainThread(Object event){
-//        MessageType.handlerNetWorkException(this,event);
+        MessageType.handlerNetWorkException(this,event);
     };
 
     @Override
     protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        HttpImpl.getInstance().unregister(this);
     }
 
     public void showProgressDialog(String message) {

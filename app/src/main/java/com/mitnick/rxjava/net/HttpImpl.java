@@ -2,24 +2,21 @@ package com.mitnick.rxjava.net;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
-
 import com.mitnick.rxjava.bean.Profile;
 import com.mitnick.rxjava.bean.RefreshRequest;
 import com.mitnick.rxjava.bean.Token;
 import com.mitnick.util.L;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Header;
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
-import timber.log.Timber;
 
 
 /**
@@ -31,10 +28,6 @@ public class HttpImpl {
 
     static volatile HttpImpl sInstance;
     static volatile ServiceApi mApiClient;
-
-    private Context mContext;
-    private CompositeSubscription mSubscriptions;
-
 
     public HttpImpl() {
     }
@@ -64,26 +57,14 @@ public class HttpImpl {
         EventBus.getDefault().post(object);
     }
 
-    //注册一个订阅者
-    public void register(Context context) {
-        this.mContext = context;
-        if (mSubscriptions == null || mSubscriptions.isUnsubscribed()) {
-                L.i(TAG, "CompositeSubscription register excute");
-                mSubscriptions = new CompositeSubscription();
-        }
-    }
-
-    //删除一个订阅者
-    public void unregister(Context context) {
-        this.mContext = null;
-        if (mSubscriptions != null) {
-            L.i(TAG, "CompositeSubscription unregister excute");
-            mSubscriptions.unsubscribe();
-        }
-    }
-
     public void login(String auth) {
-        mSubscriptions.add(getApiClient().login(auth)
+        getApiClient().login(auth)
+                        .doOnNext(new Action1<Token>(){
+                            @Override
+                            public void call(Token token) {
+                                L.i(TAG,"doOnNext()" + token.getAccess_token());
+                            }
+                        })
 //                      .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -101,10 +82,10 @@ public class HttpImpl {
 
                             @Override
                             public void onNext(Token token) {
+                                L.i(TAG,"onNext()");
                                 postEvent(token);
                             }
-                        })
-        );
+                        });
     }
 
     public void getProfiles(String accessToken) {
@@ -129,7 +110,7 @@ public class HttpImpl {
     }
 
     public void getProfile(String accessToken) {
-        mSubscriptions.add(getApiClient().getProfile(accessToken)
+        getApiClient().getProfile(accessToken)
         //               .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -149,8 +130,7 @@ public class HttpImpl {
                             public void onNext(Profile profile) {
                                 postEvent(profile);
                             }
-                        })
-        );
+                        });
     }
 
     public void refresh(String refreshToken) {
@@ -174,4 +154,33 @@ public class HttpImpl {
         });
     }
 
+    //同时进行2个操作
+    public void loginAndGetProfile(String auth){
+        getApiClient().login(auth)
+                .flatMap(new Func1<Token, Observable<Profile>>() {
+                    @Override
+                    public Observable<Profile> call(Token token) {
+                        return getApiClient().getProfile(token.getAccess_token());
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Profile>() {
+                    @Override
+                    public void onCompleted() {
+                        L.e("onCompleted！");
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        L.e("loginAndGetProfile 请求失败！" + throwable.toString());
+                        postEvent(new FailedEvent(MessageType.PROFILE, throwable));
+                    }
+
+                    @Override
+                    public void onNext(Profile profile) {
+                        postEvent(profile);
+                    }
+                });
+    }
 }
