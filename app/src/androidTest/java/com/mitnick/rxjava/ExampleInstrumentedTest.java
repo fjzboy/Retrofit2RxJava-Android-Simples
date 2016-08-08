@@ -1,8 +1,12 @@
-package com.mitnick;
+package com.mitnick.rxjava;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+
+import com.mitnick.rxjava.net.HttpImpl;
+import com.mitnick.util.T;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +25,10 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.mitnick..rxjava", appContext.getPackageName());
+//        assertEquals("com.mitnick..rxjava", appContext.getPackageName());
+
+//        HttpImpl.getInstance().login("Basic dG1qMDAxOjEyMzQ1Ng==");
+//        T.showShort(appContext,"fucking");
+        Log.i("fucking","fucking");
     }
 }

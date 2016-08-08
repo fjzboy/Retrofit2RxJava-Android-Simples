@@ -19,6 +19,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
 
 
 /**
@@ -41,7 +42,7 @@ public class HttpImpl {
     public ServiceApi getApiClient() {
         if (mApiClient == null) {
             synchronized (this) {
-                Log.i(TAG, "ServiceApi.newInstance() excute ");
+                L.i(TAG, "ServiceApi.newInstance() excute ");
                 mApiClient = ServiceFactory.createRetrofit2RxJavaService(ServiceApi.class);
             }
         }
@@ -52,7 +53,7 @@ public class HttpImpl {
     public static HttpImpl getInstance() {
         if (sInstance == null) {
             synchronized (HttpImpl.class) {
-                Log.i(TAG, "HttpImpl.newInstance() excute ");
+                L.i(TAG, "HttpImpl.newInstance() excute ");
                 sInstance = new HttpImpl();
             }
         }
@@ -94,8 +95,8 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                postEvent(new FailedEvent(MessageType.LOGIN, throwable));
                                 L.e("login 请求失败！" + throwable.toString());
+                                postEvent(new FailedEvent(MessageType.LOGIN, throwable));
                             }
 
                             @Override
@@ -114,15 +115,15 @@ public class HttpImpl {
                 if (response.isSuccessful()) {
                     postEvent(response.body());
                 } else {
+                    L.i("getProfiles 请求失败！" +  response.code());
                     postEvent(new FailedEvent(MessageType.PROFILE));
-                    L.e("getProfiles 请求失败！" +  response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable throwable) {
-                postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                 L.e("getProfiles 请求失败！" + throwable.toString());
+                postEvent(new FailedEvent(MessageType.PROFILE, throwable));
             }
         });
     }
@@ -140,8 +141,8 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                                 L.e("getProfile 请求失败！" + throwable.toString());
+                                postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                             }
 
                             @Override
@@ -167,8 +168,8 @@ public class HttpImpl {
 
             @Override
             public void onFailure(Call<Token> call, Throwable throwable) {
-                postEvent(new FailedEvent(MessageType.REFRESH, throwable));
                 L.e(TAG,"refresh 请求失败！" + throwable.toString());
+                postEvent(new FailedEvent(MessageType.REFRESH, throwable));
             }
         });
     }
