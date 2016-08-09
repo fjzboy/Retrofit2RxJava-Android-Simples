@@ -59,7 +59,7 @@ public class HttpImpl {
 
     public void login(String auth) {
         getApiClient().login(auth)
-                        .doOnNext(new Action1<Token>(){
+                        .doOnNext(new Action1<Token>(){//该方法执行请求成功后的耗时操作，比如数据库读写
                             @Override
                             public void call(Token token) {
                                 L.i(TAG,"doOnNext()" + token.getAccess_token());
@@ -76,7 +76,7 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                L.e("login 请求失败！" + throwable.toString());
+                                L.e(TAG , "login 请求失败！" + throwable.toString());
                                 postEvent(new FailedEvent(MessageType.LOGIN, throwable));
                             }
 
@@ -96,14 +96,14 @@ public class HttpImpl {
                 if (response.isSuccessful()) {
                     postEvent(response.body());
                 } else {
-                    L.i("getProfiles 请求失败！" +  response.code());
+                    L.e(TAG , "getProfiles 请求失败！" +  response.code());
                     postEvent(new FailedEvent(MessageType.PROFILE));
                 }
             }
 
             @Override
             public void onFailure(Call<Profile> call, Throwable throwable) {
-                L.e("getProfiles 请求失败！" + throwable.toString());
+                L.e(TAG , "getProfiles 请求失败！" + throwable.toString());
                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
             }
         });
@@ -122,7 +122,7 @@ public class HttpImpl {
 
                             @Override
                             public void onError(Throwable throwable) {
-                                L.e("getProfile 请求失败！" + throwable.toString());
+                                L.e(TAG , "getProfile 请求失败！" + throwable.toString());
                                 postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                             }
 
@@ -154,12 +154,13 @@ public class HttpImpl {
         });
     }
 
-    //同时进行2个操作
+    //先登录，然后马上请求信息，连续请求2次网络请求
     public void loginAndGetProfile(String auth){
         getApiClient().login(auth)
                 .flatMap(new Func1<Token, Observable<Profile>>() {
                     @Override
                     public Observable<Profile> call(Token token) {
+                        L.e(TAG,"flatMap 请求成功！");
                         return getApiClient().getProfile(token.getAccess_token());
                     }
                 })
@@ -173,12 +174,13 @@ public class HttpImpl {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        L.e("loginAndGetProfile 请求失败！" + throwable.toString());
+                        L.e(TAG,"loginAndGetProfile 请求失败！" + throwable.toString());
                         postEvent(new FailedEvent(MessageType.PROFILE, throwable));
                     }
 
                     @Override
                     public void onNext(Profile profile) {
+                        L.e(TAG,"loginAndGetProfile 请求成功！");
                         postEvent(profile);
                     }
                 });

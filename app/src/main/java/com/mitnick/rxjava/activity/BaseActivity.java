@@ -44,7 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity{
 
     @Subscribe
     protected  void onEventMainThread(Object event){
-        MessageType.handlerNetWorkException(this,event);
+//        MessageType.handlerNetWorkException(this,event);
     };
 
     @Override
@@ -57,7 +57,6 @@ public abstract class BaseActivity extends AppCompatActivity{
         if(mProgressDialog == null){
                 mProgressDialog = new ProgressDialog(this);
                 mProgressDialog.setMessage(message);
-                mProgressDialog.setCancelable(false);
                 mProgressDialog.setCanceledOnTouchOutside(false);
         }
         mProgressDialog.show();
