@@ -3,6 +3,8 @@ package com.mitnick.rxjava.net;
 import android.content.Context;
 import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
+
+import com.google.gson.Gson;
 import com.mitnick.rxjava.bean.Profile;
 import com.mitnick.rxjava.bean.RefreshRequest;
 import com.mitnick.rxjava.bean.Token;
@@ -62,7 +64,7 @@ public class HttpImpl {
                         .doOnNext(new Action1<Token>(){//该方法执行请求成功后的耗时操作，比如数据库读写
                             @Override
                             public void call(Token token) {
-                                L.i(TAG,"doOnNext()" + token.getAccess_token());
+                                L.i(TAG,"doOnNext() " + new Gson().toJson(token));
                             }
                         })
 //                      .debounce(400, TimeUnit.MILLISECONDS)//限制400毫秒的频繁http操作
@@ -160,7 +162,7 @@ public class HttpImpl {
                 .flatMap(new Func1<Token, Observable<Profile>>() {
                     @Override
                     public Observable<Profile> call(Token token) {
-                        L.e(TAG,"flatMap 请求成功！");
+                        L.e(TAG,"loginAndGetProfile flatMap 请求成功！ " + new Gson().toJson(token));
                         return getApiClient().getProfile(token.getAccess_token());
                     }
                 })
@@ -169,7 +171,7 @@ public class HttpImpl {
                 .subscribe(new Observer<Profile>() {
                     @Override
                     public void onCompleted() {
-                        L.e("onCompleted！");
+                        L.e(TAG , "onCompleted！");
                     }
 
                     @Override
@@ -180,7 +182,7 @@ public class HttpImpl {
 
                     @Override
                     public void onNext(Profile profile) {
-                        L.e(TAG,"loginAndGetProfile 请求成功！");
+                        L.e(TAG,"loginAndGetProfile 请求成功！" + new Gson().toJson(profile));
                         postEvent(profile);
                     }
                 });

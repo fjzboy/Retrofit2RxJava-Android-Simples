@@ -78,8 +78,8 @@ public class LoginActivity extends BaseActivity {
         }
         if(event instanceof Profile){
             Profile profile = (Profile) event;
-            mTextView.setText("name :" + profile.getUsername() +"\t email :"
-                    + profile.getEmail() + "\t height: "+ profile.getHeight() + "\t weight :"+ profile.getWeight());
+            mTextView.setText("name :" + profile.getUsername()  +"\t email :"
+                    + profile.getEmail() + "\t birthday :" + profile.getBirthday() + "\t height: "+ profile.getHeight() + "\t weight :"+ profile.getWeight());
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();
