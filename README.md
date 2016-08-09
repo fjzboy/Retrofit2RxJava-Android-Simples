@@ -74,3 +74,8 @@ http://stackoverflow.com/questions/36008207/how-to-run-android-code-in-eclipse
 
 To fix this, i have to go in my project.properties file，
 And in this file add this line : sdk.buildtools=23.0.2
+
+#修改灵感来源
+Think in java
+Effective java
+Clean code
