@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity {
     public void initData(){
         if(getIntent().getExtras()!=null){
             mAccessToken = getIntent().getExtras().getString("accessToken","");
-            mTextView.setText("获取Token成功！" + mAccessToken);
+            mTextView.setText("access_token：" + mAccessToken);
         }else{
 //            mTextView.setText("获取token失败，请重新登录！");
         }
@@ -46,6 +46,7 @@ public class MainActivity extends BaseActivity {
         mRxjavaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mTextView.setText("init");
                 showProgressDialog("wait...");
                 HttpImpl.getInstance().getProfile(mAccessToken);
             }
@@ -54,6 +55,7 @@ public class MainActivity extends BaseActivity {
         mRetrofitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mTextView.setText("init");
                 showProgressDialog("wait...");
                 HttpImpl.getInstance().getProfiles(mAccessToken);
             }
@@ -62,6 +64,7 @@ public class MainActivity extends BaseActivity {
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mTextView.setText("init");
                 showProgressDialog("wait...");
                 String refreshToken = PreferenceUtils.getPrefString(RxApplication.getInstance(), PreferenceConstants.REFRESH_TOKEN,"");
                 HttpImpl.getInstance().refresh(refreshToken);
@@ -75,13 +78,13 @@ public class MainActivity extends BaseActivity {
         hideProgressDialog();
         if(event instanceof Token){
             Token token = (Token) event;
-            mTextView.setText("获取Token成功！" + token.getAccess_token() );
+            mTextView.setText("access_token：" + token.getAccess_token() );
             mAccessToken = token.getAccess_token();
         }
         if(event instanceof Profile){
             Profile profile = (Profile) event;
-            mTextView.setText("获取用户信息成功：" + profile.getUsername());
-            startActivity(new Intent().setClass(MainActivity.this,MainActivity.class));
+            mTextView.setText("name：" + profile.getUsername());
+//            startActivity(new Intent().setClass(MainActivity.this,MainActivity.class));
         }
 
         if(event instanceof FailedEvent){

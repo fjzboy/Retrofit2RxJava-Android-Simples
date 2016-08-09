@@ -49,6 +49,7 @@ public class LoginActivity extends BaseActivity {
         findViewById(R.id.loginAndGetProfile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mTextView.setText("init");
                 showProgressDialog("login...");
                 HttpImpl.getInstance().loginAndGetProfile("Basic dG1qMDAxOjEyMzQ1Ng==");
             }
@@ -77,8 +78,8 @@ public class LoginActivity extends BaseActivity {
         }
         if(event instanceof Profile){
             Profile profile = (Profile) event;
-            mTextView.setText("获取成功： \t name :" + profile.getUsername() +" \t Email :"
-                    + profile.getEmail() + "\t  height: "+ profile.getHeight() + " \t weight :"+ profile.getWeight());
+            mTextView.setText("name :" + profile.getUsername() +"\t email :"
+                    + profile.getEmail() + "\t height: "+ profile.getHeight() + "\t weight :"+ profile.getWeight());
         }
         if(event instanceof FailedEvent){
             int type = ((FailedEvent) event).getType();
@@ -88,6 +89,9 @@ public class LoginActivity extends BaseActivity {
             switch (type){
                 case MessageType.LOGIN:
                     Toast.makeText(this,"登录失败！" + message,Toast.LENGTH_SHORT).show();
+                    break;
+                case MessageType.PROFILE:
+                    Toast.makeText(this,"获取用户信息失败！" + message,Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     Toast.makeText(this,"应用程序异常！" + message,Toast.LENGTH_SHORT).show();
