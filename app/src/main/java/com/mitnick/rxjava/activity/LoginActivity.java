@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.mitnick.rxjava.R;
 import com.mitnick.rxjava.RxApplication;
 import com.mitnick.rxjava.bean.Profile;
@@ -13,8 +14,6 @@ import com.mitnick.rxjava.net.HttpImpl;
 import com.mitnick.rxjava.net.MessageType;
 import com.mitnick.util.PreferenceConstants;
 import com.mitnick.util.PreferenceUtils;
-
-import timber.log.Timber;
 
 /**
  * Created by mitnick.cheng on 2016/7/28.
@@ -64,7 +63,7 @@ public class LoginActivity extends BaseActivity {
 
 
     @Override
-    protected void onEventMainThread(Object event) {
+    public void onEventMainThread(Object event) {
         super.onEventMainThread(event);
         hideProgressDialog();
         if(event instanceof Token){

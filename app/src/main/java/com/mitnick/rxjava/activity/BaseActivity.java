@@ -2,17 +2,11 @@ package com.mitnick.rxjava.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import com.mitnick.rxjava.net.FailedEvent;
-import com.mitnick.rxjava.net.HttpImpl;
-import com.mitnick.rxjava.net.MessageType;
-import timber.log.Timber;
 
 /**
  * Created by Michael Smith on 2016/7/24.
@@ -36,20 +30,20 @@ public abstract class BaseActivity extends AppCompatActivity{
 
     public abstract void initEvent();
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
-    }
-
     @Subscribe
-    protected  void onEventMainThread(Object event){
+    public  void onEventMainThread(Object event){
 //        MessageType.handlerNetWorkException(this,event);
     };
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         EventBus.getDefault().unregister(this);
     }
 
